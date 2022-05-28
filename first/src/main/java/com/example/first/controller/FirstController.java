@@ -17,7 +17,8 @@ public class FirstController {
             @ApiImplicitParam(name = "name", value = "上传人")
     })
     @GetMapping("/")
-    public String first(){
+    public String first() throws InterruptedException {
+        Thread.sleep(2000);
         return "index";
     }
 }

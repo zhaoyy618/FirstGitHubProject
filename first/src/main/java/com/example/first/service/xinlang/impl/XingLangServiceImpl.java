@@ -26,14 +26,17 @@ public class XingLangServiceImpl implements XingLangService  {
         HashMap result = new HashMap<>();
         ArrayList times = new ArrayList(1000);
         ArrayList volumes = new ArrayList(1000);
+        ArrayList vals = new ArrayList(1000);
         if(!CollectionUtils.isEmpty(userList)){
             userList.forEach(item->{
                 volumes.add(item.getVolume());
                 times.add(item.getDay());
+                vals.add(Float.parseFloat(item.getClose())-Float.parseFloat(item.getOpen()));
             });
         }
         result.put("date",times);
         result.put("volume",volumes);
+        result.put("val",vals);
         return result;
     }
 }

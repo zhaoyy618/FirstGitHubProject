@@ -1,85 +1,70 @@
-function loadTwoLine() {
+function loadTwoLine(id) {
 	    var myChart = echarts.init(document.getElementById('TwoLineChart'));
 	    // 显示标题，图例和空的坐标轴
 	    myChart.setOption({
-	        title: {
-	            text: '时间流量趋势图'
-	        },
-	        tooltip: {
-	            trigger: 'axis'
-	        },
-	        legend: {
-	            data: ['日流量趋势图']
-	        },
-	        toolbox: {
-	            show: true,
-	            feature: {
-	                mark: { show: true },
-	                dataView: { show: true, readOnly: false },
-	                magicType: { show: true, type: ['line', 'bar'] },
-	                restore: { show: true },
-	                saveAsImage: { show: true }
-	            }
-	        },
-	        calculable: true,
-	        xAxis: {
-	            type: 'category',
-	            boundaryGap: false, //取消左侧的间距
-	            data: []
-	        },
-	        yAxis: {
-	            type: 'value',
-	            splitLine: { show: false },//去除网格线
-	            name: ''
-	        },
-	        series: [{
-	            name: '日流量趋势图',
-	            type: 'line',
-	            markPoint: {
-		            data: [
-			            {type: 'max', name: '最大值'},
-			            {type: 'min', name: '最小值'}
-		            ]
-		        },
-		        markLine: {	
-			        data: [
-			            {type: 'average', name: '平均值'}
-			        ]
-			    },
-	            symbol: 'emptydiamond',    //设置折线图中表示每个坐标点的符号 emptycircle：空心圆；emptyrect：空心矩形；circle：实心圆；emptydiamond：菱形
-	            data: []
-	        }]
-	    });
+			legend: {
+				data: ['数量', '差值', '广发银行', '上海银行']
+			},
+			tooltip: {
+				trigger: 'axis'   // axis   item   none三个值
+			},
+			xAxis: {
+				data: ['A', 'B', 'C', 'D', 'E'],
+				axisLabel: {
+					//interval: 0, // 设置数据间隔
+					rotate:38, // 标题倾斜
+					// margin: 5, //刻度标签与轴线之间的距离
+					// textStyle: {
+					//  fontSize: 9, //横轴字体大小
+					//  color: "#000000",//颜色
+				}
+			},
+			yAxis: {},
+			series: [
+				{
+					data: [10, 22, 28, 43, 49],
+					type: 'line',
+					stack: 'x'
+				},
+				{
+					data: [5, 4, 3, 5, 10],
+					type: 'line',
+					stack: 'x'
+				}
+			]
+		});
 	    myChart.showLoading();    //数据加载完之前先显示一段简单的loading动画
 	    var datetimes = [];    //类别数组（实际用来盛放X轴坐标值）    
 	    var flows = [];
 	    $.ajax({
 	        type: 'get',
-	        url: 'http://localhost:8080/xingLang',//请求数据的地址
+	        url: 'http://localhost:8080/xingLang?id='+id,//请求数据的地址
 	        dataType: "json",        //返回数据形式为json
 	        success: function (result) {
-//	        	alert(result.itemId)
-//	        	console.info(result.itemId);
-	            //请求成功时执行该函数内容，result即为服务器返回的json对象           
-	           /* $.each(result.list, function (index, item) {
-	                datetimes.push(item.datetime);    //挨个取出类别并填入类别数组
-	                flows.push(item.flow);
-	            });  */
+//
 				datetimes.push(result.date);
 				flows.push(result.volume);
+
 	            myChart.hideLoading();    //隐藏加载动画
-	            myChart.setOption({ 
+	            myChart.setOption({
 	            	//加载数据图表
 	                title:{
 	                	text: "每日流量趋势图"
 	                },
 	                xAxis: {
-	                    data: datetimes
+	                    data: result.date
 	                },
 	                yAxis:{},
-	                series: [{                    
-	                    data: flows
-	                }]
+	                series: [
+	                	{
+	                		name:"数量",
+	                    	data: result.volume,
+	                	},
+						{
+							name:"差值",
+							data: result.val,
+						},
+	                ]
 	            });
 	        },
 	        error: function (errorMsg) {
@@ -89,4 +74,9 @@ function loadTwoLine() {
 	        }
 	    });
 	};
-	loadTwoLine();
+	loadTwoLine("sz002061");
+
+function search() {
+	let elementById = document.getElementById("inputSearch").value;
+	loadTwoLine(elementById);
+}
